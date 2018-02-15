@@ -44,6 +44,7 @@ public class Robot extends IterativeRobot {
 	protected boolean turn90 = false;					//
 	protected boolean turn270 = false;					//
 	protected boolean talonDump = false;				// bucket dump
+	protected boolean drive = true;
 	/********************************************************/
 	WPI_TalonSRX talon = new WPI_TalonSRX(15);
 //	talon.set(ControlMode.PercentOutput,0);				// code for in methods
@@ -52,6 +53,7 @@ public class Robot extends IterativeRobot {
 	/********************************************************/
 	protected Gyro gyro = new ADXRS450_Gyro();			// create gyro
 	static double kP = 0.03;							// constant used to drive straight
+	protected String gameData;
 	/********************************************************/
 //	Accelerometer accel; 
 //	accel  = new BuiltInAccelerometer(Accelerometer.Range.k4G);		// for use in methods
@@ -95,6 +97,8 @@ public class Robot extends IterativeRobot {
 		m_myArms = new DifferentialDrive(left4, right5);
 		driverstick.setXChannel(0);
 		driverstick.setYChannel(1);
+		driverstick.setZChannel(2);
+		driverstick.setThrottleChannel(3);
 		/**********************************************************************
 		 * Other initialization DO NOT CHANGE THIS
 		 *********************************************************************/				
@@ -114,6 +118,7 @@ public class Robot extends IterativeRobot {
 		 *********************************************************************/	
 		mode = (int) autoChoose.getSelected();			// find play from dashboard
 		pos = (int) autoChooser.getSelected();			// find position from dashboard
+		gameData = DriverStation.getInstance().getGameSpecificMessage();
 		gyro.reset();									// restart (centre) gyro
 		timer.start();									// reset timer
 		timer.reset();
@@ -136,10 +141,9 @@ public class Robot extends IterativeRobot {
 		case 1:
 			// beginning of case 1
 			angle = gyro.getAngle();
-			System.out.println("Automonous Forward");
 			if(pos == 0) {
 			if(timer.get()<4) {
-			m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 20 FT Forward
+			m_myRobot.arcadeDrive(0.7, -angle*0.15);
 			}
 			else if(timer.get()>4) {
 				m_myRobot.arcadeDrive(0,0);
@@ -150,7 +154,7 @@ public class Robot extends IterativeRobot {
 			 *********************************************************************/	
 			if(pos == 2) {
 				if(timer.get()<4) {
-					m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 20 FT Forward
+					m_myRobot.arcadeDrive(0.7, -angle*0.15);
 					}
 					else if(timer.get()>4) {
 						m_myRobot.arcadeDrive(0,0);
@@ -161,7 +165,7 @@ public class Robot extends IterativeRobot {
 			 *********************************************************************/	
 			if(gameData.charAt(0)=='L' && pos == 1) {
 				angle = gyro.getAngle();
-				if(timer.get()<1.2) {
+				if(timer.get()<1.22) {
 					m_myRobot.arcadeDrive(0.7, -angle*0.15);
 				}
 				else if(timer.get()<1.3) {
@@ -169,47 +173,51 @@ public class Robot extends IterativeRobot {
 				}
 				else if(timer.get()<2.3) {
 					if(angle<90) {
-					double speed = (90-angle)/90;
+					double speed = (90-angle)/90+0.075;
 					m_myRobot.tankDrive(speed, -speed);
 					angle = gyro.getAngle();
 				}
 					else {
 						m_myRobot.arcadeDrive(0, 0);
-						gyro.reset();
 					}
 				}
-				else if(timer.get()<4.7) {
-					m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
+				else if(timer.get()<2.35) {
+					gyro.reset();
+				}
+				else if(timer.get()<4.2) {
+					m_myRobot.arcadeDrive(0.7, -angle*0.15);
 					}
-				else if(timer.get()<4.8) {
+				else if(timer.get()<4.3) {
 					m_myRobot.arcadeDrive(0,0);
 					gyro.reset();
 				}
-				else if(timer.get()<5.8) {
+				else if(timer.get()<5.3) {
 					if(angle>-90) {
-					double speed = (90+angle)/90;
+					double speed = (90+angle)/90+0.075;
 					m_myRobot.tankDrive(-speed, speed);
 					angle = gyro.getAngle();
 				}
 					else {
 						m_myRobot.arcadeDrive(0, 0);
-						gyro.reset();
 					}
 				}
-				else if(timer.get()<5.9) {
+				else if(timer.get()<5.4) {
 					m_myRobot.arcadeDrive(0, 0);
 					gyro.reset();
 				}
-				else if(timer.get()<8.3) {
-					m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
+				else if(timer.get()<8) {
+					m_myRobot.arcadeDrive(0.7, -angle*0.15);
 					}
+				else if(timer.get()>8) {
+					m_myRobot.arcadeDrive(0, 0);
+				}
 			}
 			/**********************************************************************
 			 * Autonomous
 			 *********************************************************************/	
 			if(gameData.charAt(0)=='R' && pos == 1) {
 				angle = gyro.getAngle();
-				if(timer.get()<1.2) {
+				if(timer.get()<1.22) {
 					m_myRobot.arcadeDrive(0.7, -angle*0.15);
 				}
 				else if(timer.get()<1.3) {
@@ -217,40 +225,46 @@ public class Robot extends IterativeRobot {
 				}
 				else if(timer.get()<2.3) {
 					if(angle>-90) {
-					double speed = (90+angle)/90;
+					double speed = (90+angle)/90+0.075;
 					m_myRobot.tankDrive(-speed, speed);
 					angle = gyro.getAngle();
 				}
 					else {
 						m_myRobot.arcadeDrive(0, 0);
-						gyro.reset();
 					}
 				}
-				else if(timer.get()<4.7) {
-					m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
+				else if(timer.get()<2.35) {
+					gyro.reset();
+				}
+				else if(timer.get()<4.4) {
+					m_myRobot.arcadeDrive(0.7, -angle*0.15);
 					}
-				else if(timer.get()<4.8) {
+				else if(timer.get()<4.5) {
 					m_myRobot.arcadeDrive(0,0);
 					gyro.reset();
 				}
-				else if(timer.get()<5.8) {
+				else if(timer.get()<5.5) {
 					if(angle>-90) {
-					double speed = (90-angle)/90;
+					double speed = (90-angle)/90+0.075;
 					m_myRobot.tankDrive(speed, -speed);
 					angle = gyro.getAngle();
 				}
+					
 					else {
 						m_myRobot.arcadeDrive(0, 0);
-						gyro.reset();
 					}
 				}
-				else if(timer.get()<5.9) {
+				
+				else if(timer.get()<5.6) {
 					m_myRobot.arcadeDrive(0, 0);
 					gyro.reset();
 				}
-				else if(timer.get()<8.3) {
-					m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
+				else if(timer.get()<8.1) {
+					m_myRobot.arcadeDrive(0.7, -angle*0.15);
 					}
+				else if(timer.get()>8.1) {
+					m_myRobot.arcadeDrive(0, 0);
+				}
 			}
 			else {
 				m_myRobot.arcadeDrive(0, 0);
@@ -268,39 +282,37 @@ public class Robot extends IterativeRobot {
 			 *********************************************************************/	
 			if(gameData.charAt(0)=='L' && pos == 0) {
 			angle = gyro.getAngle();
-			System.out.println("Automonous Forward + Turn");
-			if(timer.get()<2.4) {
-			m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
+			if(timer.get()<2.5) {
+			m_myRobot.arcadeDrive(0.7, -angle*0.15);
 			}
-			else if(timer.get()<2.5) {
+			else if(timer.get()<2.6) {
 				m_myRobot.arcadeDrive(0,0);
 			}
-			else if(timer.get()<3.5) {
+			else if(timer.get()<3.6) {
 				if(angle<90) {
-				double speed = (90-angle)/90;
+				double speed = (90-angle)/90+0.075;
 				m_myRobot.tankDrive(speed, -speed);
 				angle = gyro.getAngle();
 			}
 				else {
 					m_myRobot.arcadeDrive(0, 0);
-					gyro.reset();
 				}
 			}
-			else if(timer.get()<4.5) {
+			else if(timer.get()<3.65) {
+				gyro.reset();
+			}
+			else if(timer.get()<4.35) {
 				m_myRobot.arcadeDrive(0.65, -angle*0.15);
 			}
-			else if(timer.get()<5.3) {
-				talon.set(ControlMode.PercentOutput,-0.8);
-				System.out.println("bucket up");
+			else if(timer.get()<5.1) {
+				talon.set(ControlMode.PercentOutput,-0.9);
 				m_myRobot.arcadeDrive(0, 0);
 			}
-			else if (timer.get()<5.75){
-				talon.set(ControlMode.PercentOutput,0.8);
-				System.out.println("bucket down");
+			else if (timer.get()<5.65){
+				talon.set(ControlMode.PercentOutput,0.85);
 			}
-			else if(timer.get()>5.75){
+			else if(timer.get()>5.65){
 				talon.set(ControlMode.PercentOutput,0);
-				System.out.println("bucket off");
 				m_myRobot.arcadeDrive(0, 0);
 			}
 		}
@@ -311,39 +323,37 @@ public class Robot extends IterativeRobot {
 			 *********************************************************************/	
 			if(gameData.charAt(0)=='R' && pos == 2) {
 				angle = gyro.getAngle();
-				System.out.println("Automonous Forward + Turn");
-				if(timer.get()<2.4) {
-				m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
+				if(timer.get()<2.5) {
+				m_myRobot.arcadeDrive(0.7, -angle*0.15);
 				}
-				else if(timer.get()<2.5) {
+				else if(timer.get()<2.55) {
 					m_myRobot.arcadeDrive(0,0);
 				}
-				else if(timer.get()<3.5) {
+				else if(timer.get()<3.55) {
 					if(angle>-90) {
-					double speed = (90+angle)/90;
+					double speed = (90+angle)/90+0.075;
 					m_myRobot.tankDrive(-speed, speed);
 					angle = gyro.getAngle();
 				}
 					else {
 						m_myRobot.arcadeDrive(0, 0);
-						gyro.reset();
 					}
 				}
-				else if(timer.get()<4.5) {
+				else if(timer.get()<3.6) {
+					gyro.reset();
+				}
+				else if(timer.get()<4.3) {
 					m_myRobot.arcadeDrive(0.65, -angle*0.15);
 				}
-				else if(timer.get()<5.3) {
-					talon.set(ControlMode.PercentOutput,-0.8);
-					System.out.println("bucket up");
+				else if(timer.get()<5.05) {
+					talon.set(ControlMode.PercentOutput,-0.9);
 					m_myRobot.arcadeDrive(0, 0);
 				}
-				else if (timer.get()<5.75){
-					talon.set(ControlMode.PercentOutput,0.8);
-					System.out.println("bucket down");
+				else if (timer.get()<5.6){
+					talon.set(ControlMode.PercentOutput,0.85);
 				}
-				else if(timer.get()>5.75){
+				else if(timer.get()>5.6){
 					talon.set(ControlMode.PercentOutput,0);
-					System.out.println("bucket off");
 					m_myRobot.arcadeDrive(0, 0);
 				}
 			}
@@ -352,20 +362,84 @@ public class Robot extends IterativeRobot {
 			 * Autonomous
 			 *********************************************************************/	
 			if(gameData.charAt(0)=='R' && pos == 0) {
-				
+				angle = gyro.getAngle();
+				if(timer.get()<1.25) {
+					m_myRobot.arcadeDrive(0.7, -angle*0.15);
+				}
+				else if(timer.get()<1.2) {
+					m_myRobot.arcadeDrive(0,0);
+				}
+				else if(timer.get()<2.2) {
+					if(angle<90) {
+					double speed = (90-angle)/90+0.075;
+					m_myRobot.tankDrive(speed, -speed);
+					angle = gyro.getAngle();
+				}
+					else {
+						m_myRobot.arcadeDrive(0, 0);
+					}
+				}
+				else if(timer.get()<2.25) {
+					gyro.reset();
+				}
+				else if(timer.get()<6.15) {
+					m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
+					}
+				else if(timer.get()<6.2) {
+					m_myRobot.arcadeDrive(0,0);
+					gyro.reset();
+				}
+			else if(timer.get()<7.2) {
+				if(angle>-90) {
+				double speed = (90+angle)/90+0.075;
+				m_myRobot.tankDrive(-speed, speed);
+				angle = gyro.getAngle();
+			}
+				else {
+					m_myRobot.arcadeDrive(0, 0);
+				}
+			}
+			else if(timer.get()<7.3) {
+				m_myRobot.arcadeDrive(0, 0);
+				gyro.reset();
+			}
+			else if(timer.get()<8.6) {
+				m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
+				}
+			else if(timer.get()<9.6) {
+				if(angle>-90) {
+				double speed = (90+angle)/90+0.075;
+				m_myRobot.tankDrive(-speed, speed);
+				angle = gyro.getAngle();
+			}
+				else {
+					m_myRobot.arcadeDrive(0, 0);
+				}
+			}
+			else if(timer.get()<9.65) {
+				gyro.reset();
+			}
+			else if(timer.get()<10.35) {
+				m_myRobot.arcadeDrive(0.65, -angle*0.15);
+			}
+			else if(timer.get()<11.1) {
+				talon.set(ControlMode.PercentOutput,-0.9);
+				m_myRobot.arcadeDrive(0, 0);
+			}
+			else if(timer.get()<11.65){
+				talon.set(ControlMode.PercentOutput,0.85);
+			}
+			else if(timer.get()>11.65){
+				talon.set(ControlMode.PercentOutput,0);
+				m_myRobot.arcadeDrive(0, 0);
+			}
 			}
 			/**********************************************************************
 			 * Autonomous
 			 *********************************************************************/	
 			if(gameData.charAt(0)=='L' && pos == 2) {
-				
-			}
-			/**********************************************************************
-			 * Autonomous
-			 *********************************************************************/	
-			if(gameData.charAt(0)=='R' && pos == 1) {
 				angle = gyro.getAngle();
-				if(timer.get()<1.2) {
+				if(timer.get()<1.25) {
 					m_myRobot.arcadeDrive(0.7, -angle*0.15);
 				}
 				else if(timer.get()<1.3) {
@@ -373,66 +447,146 @@ public class Robot extends IterativeRobot {
 				}
 				else if(timer.get()<2.3) {
 					if(angle<90) {
-					double speed = (90-angle)/90;
+					double speed = (90+angle)/90+0.075;
+					m_myRobot.tankDrive(-speed, speed);
+					angle = gyro.getAngle();
+				}
+					else {
+						m_myRobot.arcadeDrive(0, 0);
+					}
+				}
+				else if(timer.get()<2.35) {
+					gyro.reset();
+				}
+				else if(timer.get()<6.15) {
+					m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
+					}
+				else if(timer.get()<6.2) {
+					m_myRobot.arcadeDrive(0,0);
+					gyro.reset();
+				}
+			else if(timer.get()<7.2) {
+				if(angle>-90) {
+				double speed = (90-angle)/90+0.075;
+				m_myRobot.tankDrive(speed, -speed);
+				angle = gyro.getAngle();
+			}
+				else {
+					m_myRobot.arcadeDrive(0, 0);
+				}
+			}
+			else if(timer.get()<7.3) {
+				m_myRobot.arcadeDrive(0, 0);
+				gyro.reset();
+			}
+			else if(timer.get()<8.6) {
+				m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
+				}
+			else if(timer.get()<9.6) {
+				if(angle>-90) {
+				double speed = (90-angle)/90+0.075;
+				m_myRobot.tankDrive(speed, -speed);
+				angle = gyro.getAngle();
+			}
+				else {
+					m_myRobot.arcadeDrive(0, 0);
+				}
+			}
+			else if(timer.get()<9.65) {
+				gyro.reset();
+			}
+			else if(timer.get()<10.35) {
+				m_myRobot.arcadeDrive(0.65, -angle*0.15);
+			}
+			else if(timer.get()<11.1) {
+				talon.set(ControlMode.PercentOutput,-0.9);
+				m_myRobot.arcadeDrive(0, 0);
+			}
+			else if(timer.get()<11.65){
+				talon.set(ControlMode.PercentOutput,0.85);
+				System.out.println("bucket down");
+			}
+			else if(timer.get()>11.65){
+				talon.set(ControlMode.PercentOutput,0);
+				m_myRobot.arcadeDrive(0, 0);
+			}
+			}
+			/**********************************************************************
+			 * Autonomous
+			 *********************************************************************/	
+			if(gameData.charAt(0)=='R' && pos == 1) {
+				angle = gyro.getAngle();
+				if(timer.get()<1.25) {
+					m_myRobot.arcadeDrive(0.7, -angle*0.15);
+				}
+				else if(timer.get()<1.3) {
+					m_myRobot.arcadeDrive(0,0);
+				}
+				else if(timer.get()<2.3) {
+					if(angle<90) {
+					double speed = (90-angle)/90+0.075;
 					m_myRobot.tankDrive(speed, -speed);
 					angle = gyro.getAngle();
 				}
 					else {
 						m_myRobot.arcadeDrive(0, 0);
-						gyro.reset();
 					}
 				}
-				else if(timer.get()<4.7) {
+				else if(timer.get()<2.35) {
+					gyro.reset();
+				}
+				else if(timer.get()<4.2) {
 					m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
 					}
-				else if(timer.get()<4.8) {
+				else if(timer.get()<4.3) {
 					m_myRobot.arcadeDrive(0,0);
 					gyro.reset();
 				}
-				else if(timer.get()<5.8) {
+				else if(timer.get()<5.3) {
 					if(angle>-90) {
-					double speed = (90+angle)/90;
+					double speed = (90+angle)/90+0.075;
 					m_myRobot.tankDrive(-speed, speed);
 					angle = gyro.getAngle();
 				}
 					else {
 						m_myRobot.arcadeDrive(0, 0);
-						gyro.reset();
 					}
 				}
-				else if(timer.get()<5.9) {
+				else if(timer.get()<5.35) {
 					m_myRobot.arcadeDrive(0, 0);
 					gyro.reset();
 				}
-				else if(timer.get()<7.1) {
-					m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
+				else if(timer.get()<6.65) {
+					m_myRobot.arcadeDrive(0.7, -angle*0.15);
 					}
-				else if(timer.get()<8.1) {
+				else if(timer.get()<6.7) {
+					m_myRobot.arcadeDrive(0, 0);
+				}
+				else if(timer.get()<7.7) {
 					if(angle>-90) {
-					double speed = (90+angle)/90;
+					double speed = (90+angle)/90+0.075;
 					m_myRobot.tankDrive(-speed, speed);
 					angle = gyro.getAngle();
 				}
 					else {
 						m_myRobot.arcadeDrive(0, 0);
-						gyro.reset();
 					}
 				}
-				else if(timer.get()<9.1) {
+				else if(timer.get()<7.75) {
+					gyro.reset();
+				}
+				else if(timer.get()<8.4) {
 					m_myRobot.arcadeDrive(0.65, -angle*0.15);
 				}
-				else if(timer.get()<9.9) {
-					talon.set(ControlMode.PercentOutput,-0.8);
-					System.out.println("bucket up");
+				else if(timer.get()<9.15) {
+					talon.set(ControlMode.PercentOutput,-0.9);
 					m_myRobot.arcadeDrive(0, 0);
 				}
-				else if (timer.get()<10.3){
-					talon.set(ControlMode.PercentOutput,0.8);
-					System.out.println("bucket down");
+				else if (timer.get()<9.7){
+					talon.set(ControlMode.PercentOutput,0.85);
 				}
-				else if(timer.get()>10.3){
+				else if(timer.get()>9.7){
 					talon.set(ControlMode.PercentOutput,0);
-					System.out.println("bucket off");
 					m_myRobot.arcadeDrive(0, 0);
 				}
 			}
@@ -441,7 +595,7 @@ public class Robot extends IterativeRobot {
 			 *********************************************************************/	
 			if(gameData.charAt(0)=='L' && pos == 1) {
 				angle = gyro.getAngle();
-				if(timer.get()<1.2) {
+				if(timer.get()<1.25) {
 					m_myRobot.arcadeDrive(0.7, -angle*0.15);
 				}
 				else if(timer.get()<1.3) {
@@ -449,66 +603,68 @@ public class Robot extends IterativeRobot {
 				}
 				else if(timer.get()<2.3) {
 					if(angle>-90) {
-					double speed = (90+angle)/90;
+					double speed = (90+angle)/90+0.075;
 					m_myRobot.tankDrive(-speed, speed);
 					angle = gyro.getAngle();
 				}
 					else {
 						m_myRobot.arcadeDrive(0, 0);
-						gyro.reset();
 					}
 				}
-				else if(timer.get()<4.7) {
-					m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
-					}
-				else if(timer.get()<4.8) {
-					m_myRobot.arcadeDrive(0,0);
+				else if(timer.get()<2.35) {
 					gyro.reset();
 				}
-				else if(timer.get()<5.8) {
+				else if(timer.get()<4.4) {
+					m_myRobot.arcadeDrive(0.7, -angle*0.15);
+					}
+				else if(timer.get()<4.5) {
+					m_myRobot.arcadeDrive(0,0);
+				}
+				else if(timer.get()<5.5) {
 					if(angle>-90) {
-					double speed = (90-angle)/90;
+					double speed = (90-angle)/90+0.075;
 					m_myRobot.tankDrive(speed, -speed);
 					angle = gyro.getAngle();
 				}
 					else {
 						m_myRobot.arcadeDrive(0, 0);
-						gyro.reset();
 					}
 				}
-				else if(timer.get()<5.9) {
+				else if(timer.get()<5.55) {
 					m_myRobot.arcadeDrive(0, 0);
 					gyro.reset();
 				}
-				else if(timer.get()<7.1) {
-					m_myRobot.arcadeDrive(0.7, -angle*0.15);		//For 12 FT Forward
+				else if(timer.get()<6.85) {
+					m_myRobot.arcadeDrive(0.7, -angle*0.15);
 					}
-				else if(timer.get()<8.1) {
+				else if(timer.get()<6.9) {
+					m_myRobot.arcadeDrive(0, 0);
+				}
+				else if(timer.get()<7.9) {
 					if(angle<90) {
-					double speed = (90-angle)/90;
+					double speed = (90-angle)/90+0.075;
 					m_myRobot.tankDrive(speed, -speed);
 					angle = gyro.getAngle();
 				}
 					else {
 						m_myRobot.arcadeDrive(0, 0);
-						gyro.reset();
 					}
 				}
-				else if(timer.get()<9.1) {
+				else if(timer.get()<7.95) {
+					gyro.reset();
+				}
+				else if(timer.get()<8.6) {
 					m_myRobot.arcadeDrive(0.65, -angle*0.15);
 				}
-				else if(timer.get()<9.9) {
-					talon.set(ControlMode.PercentOutput,-0.8);
-					System.out.println("bucket up");
+				else if(timer.get()<9.35) {
+					talon.set(ControlMode.PercentOutput,-0.9);
 					m_myRobot.arcadeDrive(0, 0);
 				}
-				else if (timer.get()<10.3){
-					talon.set(ControlMode.PercentOutput,0.8);
-					System.out.println("bucket down");
+				else if (timer.get()<9.9){
+					talon.set(ControlMode.PercentOutput,0.85);
 				}
-				else if(timer.get()>10.3){
+				else if(timer.get()>9.9){
 					talon.set(ControlMode.PercentOutput,0);
-					System.out.println("bucket off");
 					m_myRobot.arcadeDrive(0, 0);
 				}
 			}
@@ -540,40 +696,47 @@ public class Robot extends IterativeRobot {
 		turn270 = false;
 		turn90 = false;
 		
-		timer.reset();				// restet the timer
+		timer.reset();				// reset the timer
 		timer.start();	
 		gyro.reset();				// reset the gyro
 	}
 	
 	@Override
 	public void teleopPeriodic() {
+		if(driverstick.getRawButton(3)) {
+			m_myArms.tankDrive(-1, -1);
+		}
+		else if(driverstick.getRawButton(4)) {
+			m_myArms.tankDrive(1, 1);
+		}
+		else {
+			m_myArms.tankDrive(0, 0);
+		}
 		/*
 		 *  Get button selection
-		 *  button 1 (trigger turn on Talon bucket)
+		 *  button 2 (trigger turn on Talon bucket)
 		 *  button 7 turn 270
-		 *  button 9 turn 180
+		 *  button 9 kill switch for all buttons
 		 *  button 11 turn 90
 		 *  
 		 */
 	
-		if(driverstick.getRawButton(1) && talonDump != true) {
+		if(driverstick.getRawButton(2) && talonDump != true) {
 			startTime= timer.get();
 			talonDump = true;
 		}
 		else if(driverstick.getRawButton(7)) {
-			turn180 = false;
 			turn270 = true;
 			turn90 = false;
 			gyro.reset();
 		}
 		else if(driverstick.getRawButton(9)) {
-			turn180 = true;
 			turn270 = false;
 			turn90 = false;
+			talonDump = false;
 			gyro.reset();
 		}
 		else if(driverstick.getRawButton(11)) {
-			turn180 = false;
 			turn270 = false;
 			turn90 = true;
 			gyro.reset();
@@ -584,7 +747,7 @@ public class Robot extends IterativeRobot {
 		 *  
 		 */	
 		double newTime = timer.get();						// used to control bucket timing
-		double timeUp = 0.8;								// how long the motor raises the bucket
+		double timeUp = 0.75;								// how long the motor raises the bucket
 		double timeDown = 0.55;								// how long motor drops bucket
 		if(talonDump == true) {
 			/********************************************************************************
@@ -592,37 +755,23 @@ public class Robot extends IterativeRobot {
 			 * Lift bucket 
 			 *********************************************************************************/
 			if(newTime< startTime +timeUp) {
-				talon.set(ControlMode.PercentOutput,-0.8);
-				System.out.println("bucket up");
+				talon.set(ControlMode.PercentOutput,-0.9);
 			}else if (newTime< startTime+(timeUp+timeDown) && newTime> startTime+timeUp){
-				talon.set(ControlMode.PercentOutput,0.8);
-				System.out.println("bucket down");
+				talon.set(ControlMode.PercentOutput,0.85);
 			}else if (newTime> startTime+(timeUp+timeDown)) {
 				talon.set(ControlMode.PercentOutput,0);
-				System.out.println("bucket off");
 				talonDump = false;
 			}
 			/********************************************************************************
 			 * CODE IS NOT COMPLETE
 			 *********************************************************************************/
-		}else if(turn180 == true) {
-			double angle = gyro.getAngle();	
-			if(angle<180) {
-				double speed = (180-angle)/180 + 0.15;
-				m_myRobot.tankDrive(speed, -speed);
-				angle = gyro.getAngle();
-			}else if(angle>180){
-				turn180 = false;
-				m_myRobot.tankDrive(0, 0);
-				gyro.reset();
-			}
-		}else if(turn90 == true) {
+		}	else if(turn270 == true) {
 			double angle = gyro.getAngle();
 			if(angle>-90) {
-				double speed = (90+angle)/90 + 0.15;
+				double speed = (90+angle)/90 + 0.075;
 				m_myRobot.tankDrive(-speed, speed);
 				angle = gyro.getAngle();
-			}else if(angle<-90){
+			}else {
 				turn270 = false;
 				m_myRobot.tankDrive(0, 0);
 				gyro.reset();
@@ -630,31 +779,22 @@ public class Robot extends IterativeRobot {
 		}else if(turn90 == true) {
 			double angle = gyro.getAngle();
 			if(angle<90) {
-				double speed = (90-angle)/90 + 0.15;
+				double speed = (90-angle)/90 + 0.075;
 				m_myRobot.tankDrive(speed, -speed);
 				angle = gyro.getAngle();
-			}else if(angle>90) {
+			} else{
 				turn90 = false;
 				m_myRobot.tankDrive(0, 0);
 				gyro.reset();
 			}
-		}else {
-			m_myRobot.arcadeDrive(-driverstick.getY(),driverstick.getX(),true );
+		}else if(drive == true){
+			double throttle = Math.sqrt(Math.abs((driverstick.getThrottle()-1)/2));	
+			double turn = Math.sqrt(Math.abs(driverstick.getZ())/4)*Math.abs(driverstick.getZ())/driverstick.getZ();
+			m_myRobot.arcadeDrive(-driverstick.getY()*throttle,(driverstick.getX()+turn)*throttle,true );
 			double angle = gyro.getAngle();
-//			System.out.println("Angle = " + angle);
 			turn180 = false;
 			turn270 = false;
 			turn90 = false;
-			if(driverstick.getRawButton(3)) {
-				m_myArms.tankDrive(-1, -1);
-			}
-			else if(driverstick.getRawButton(4)) {
-				m_myArms.tankDrive(1, 1);
-			}
-			else {
-				m_myArms.tankDrive(0, 0);
-			}
 		}
 	}
 }
-
