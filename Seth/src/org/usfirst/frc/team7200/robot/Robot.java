@@ -1,4 +1,4 @@
-		/********************************************************************************
+	/********************************************************************************
 		 * DANGER THIS CODE IS NOT COMPLETE see lines 199- 214
 		 *********************************************************************************/
 package org.usfirst.frc.team7200.robot;
@@ -132,7 +132,6 @@ public class Robot extends IterativeRobot {
 		 * 
 		 */
 		switch(pos) {
-		
 		case 0:
 			System.out.println("Seth Is Awesome");
 			break;
